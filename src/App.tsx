@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import styled from 'styled-components'; 
+import styled from 'styled-components';
+import axios from 'axios'
 
 const FormContainer = styled.div`
 	display: flex;
@@ -47,7 +48,7 @@ const SubmitBtn = styled.div`
 	cursor: pointer;
 `;
 
-interface personInfo {
+type personInfo = {
 	name: string
 	age: number
 	mail: string
@@ -56,11 +57,12 @@ interface personInfo {
 
 function App() {
 
-	const [postData, setPostData] = useState<personInfo>();
-
-	const funcA = () => {
-		console.log('hello');
-	}
+	const [postData, setPostData] = useState<personInfo>({
+		name: '',
+		age: 0,
+		mail: '',
+		country: '',
+	});
 
 	return (
 		<FormContainer>
@@ -68,21 +70,26 @@ function App() {
 				<Title>Google Sheets Test</Title>
 				<Field>
 					<FieldName>Name</FieldName>
-					<FieldInput placeholder="Enter your name"/>
+					<FieldInput placeholder="Enter your name" onChange={(e)=> setPostData({...postData, name:e.target.value})}/>
 				</Field>
 				<Field>
 					<FieldName>Age</FieldName>
-					<FieldInput placeholder="Enter your age"/>
+					<FieldInput placeholder="Enter your age" onChange={(e)=> setPostData({...postData, age:parseInt(e.target.value)})}/>
 				</Field>
 				<Field>
 					<FieldName>Mail</FieldName>
-					<FieldInput placeholder="Enter your mail"/>
+					<FieldInput placeholder="Enter your mail" onChange={(e)=> setPostData({...postData, mail:e.target.value})}/>
 				</Field>
 				<Field>
 					<FieldName>Country</FieldName>
-					<FieldInput placeholder="Enter your country"/>
+					<FieldInput placeholder="Enter your country" onChange={(e)=> setPostData({...postData, country:e.target.value})}/>
 				</Field>
-				<SubmitBtn>Submit</SubmitBtn>
+				<SubmitBtn onClick={()=> {
+					axios.post('https://sheet.best/api/sheets/636b77a8-8815-4dec-ac25-48026117f6f3', postData)
+					.then(response => {
+					  console.log(response);
+					})
+				}}>Submit</SubmitBtn>
 			</div>
 		</FormContainer>
 	);
